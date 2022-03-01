@@ -41,32 +41,36 @@ const PRODUCT_COLOR = [
   '#FFC107'
 ];
 
+export const formatProducts=(data)=>{
+  const resArr=[...Array(24)].map((_, index) => {
+    const setIndex = index + 1;
+    return {
+      id: data?data[index].id:faker.datatype.uuid(),
+      cover: data?data[index].photo:mockImgProduct(setIndex),
+      name: data?data[index].name:PRODUCT_NAME[index],
+      price: data?data[index].price:faker.datatype.number({ min: 4, max: 99, precision: 0.01 }),
+      priceSale: data?data[index].price*1.2:0,
+      colors:
+        (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
+        (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
+        (setIndex === 3 && PRODUCT_COLOR.slice(2, 4)) ||
+        (setIndex === 4 && PRODUCT_COLOR.slice(3, 6)) ||
+        (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
+        (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
+        PRODUCT_COLOR,
+      status: sample(['sale', 'new', '', ''])
+    };
+  });
+return resArr
+}
 // ----------------------------------------------------------------------
-const products = ()=>{
+const products = (passedData)=>{
   const Navigate=useNavigate()
   const data=useGetProducts();
   if (data!= null && data.status==0) {
     Navigate('/login')
   }
-  const resArr=[...Array(24)].map((_, index) => {
-      const setIndex = index + 1;
-      return {
-        id: data?data[index].id:faker.datatype.uuid(),
-        cover: data?data[index].photo:mockImgProduct(setIndex),
-        name: data?data[index].name:PRODUCT_NAME[index],
-        price: data?data[index].price:faker.datatype.number({ min: 4, max: 99, precision: 0.01 }),
-        priceSale: data?data[index].price*1.2:0,
-        colors:
-          (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
-          (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
-          (setIndex === 3 && PRODUCT_COLOR.slice(2, 4)) ||
-          (setIndex === 4 && PRODUCT_COLOR.slice(3, 6)) ||
-          (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
-          (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
-          PRODUCT_COLOR,
-        status: sample(['sale', 'new', '', ''])
-      };
-    });
+  const resArr=formatProducts(data);
 return resArr
 }
 

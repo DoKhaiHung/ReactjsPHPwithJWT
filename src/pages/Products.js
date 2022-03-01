@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 // material
 import { Container, Stack, Typography } from '@mui/material';
 // components
@@ -7,17 +7,17 @@ import Page from '../components/Page';
 import {
   ProductSort,
   ProductList,
-  ProductCartWidget,
   ProductFilterSidebar
 } from '../sections/@dashboard/products';
 //
-import PRODUCTS from '../_mocks_/products';
+import PRODUCTS,{formatProducts} from '../_mocks_/products';
 
 // ----------------------------------------------------------------------
 
 export default function EcommerceShop() {
   const [openFilter, setOpenFilter] = useState(false);
-
+  const productsArr=PRODUCTS();
+  const [filteredProducts,setfilteredProducts]=useState(null);
   const formik = useFormik({
     initialValues: {
       gender: '',
@@ -45,7 +45,11 @@ export default function EcommerceShop() {
     handleSubmit();
     resetForm();
   };
-  const productsArr=PRODUCTS();
+  const handleSort=(value)=>{
+    const temp=formatProducts(value)
+    setfilteredProducts(temp);
+  }
+
   return (
     <Page title="Dashboard: Products | Minimal-UI">
       <Container>
@@ -68,12 +72,10 @@ export default function EcommerceShop() {
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
             />
-            <ProductSort />
+            <ProductSort setSort={handleSort}  />
           </Stack>
         </Stack>
-
-        <ProductList products={productsArr} />
-        <ProductCartWidget />
+        <ProductList  products={filteredProducts||productsArr} />
       </Container>
     </Page>
   );
